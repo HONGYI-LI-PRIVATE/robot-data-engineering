@@ -1,0 +1,14 @@
+.git
+__pycache__
+*.pyc
+.venv
+venv
+wandb
+checkpoints
+outputs
+*.hdf5
+*.h5
+*.mp4
+*.bag
+*.mcap
+.DS_Store

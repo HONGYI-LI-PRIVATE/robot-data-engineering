@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (large files, download locally)
+*.hdf5
+*.h5
+*.mp4
+*.avi
+*.bag
+*.mcap
+*.parquet
+!reports/**/*.mp4
+
+# Model checkpoints
+checkpoints/
+outputs/
+wandb/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Ruff cache
+.ruff_cache/
+
+# Logs
+*.log
+LOG.md
