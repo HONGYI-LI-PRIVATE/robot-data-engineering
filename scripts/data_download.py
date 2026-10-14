@@ -55,11 +55,11 @@ def download_lerobot():
           ├── observation.images.cam_left_wrist/
           └── observation.images.cam_right_wrist/
     """
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Downloading {LEROBOT_DATASET}")
     print(f"Destination: {LEROBOT_DIR}")
-    print(f"Expected size: ~1.57 GB")
-    print(f"{'='*60}\n")
+    print("Expected size: ~1.57 GB")
+    print(f"{'=' * 60}\n")
 
     LEROBOT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -69,9 +69,9 @@ def download_lerobot():
         from huggingface_hub import snapshot_download
 
         snapshot_download(
-            repo_id=LEROBOT_DATASET,   # Hub 上的数据集 ID
-            repo_type="dataset",        # 告诉 HF 这是数据集而不是模型
-            local_dir=str(LEROBOT_DIR), # 下载到哪里
+            repo_id=LEROBOT_DATASET,  # Hub 上的数据集 ID
+            repo_type="dataset",  # 告诉 HF 这是数据集而不是模型
+            local_dir=str(LEROBOT_DIR),  # 下载到哪里
         )
         print(f"\nLeRobot dataset saved to {LEROBOT_DIR}")
     except Exception as e:
@@ -80,10 +80,15 @@ def download_lerobot():
         print("Trying huggingface-cli fallback...")
         subprocess.run(
             [
-                sys.executable, "-m", "huggingface_hub",
-                "download", LEROBOT_DATASET,
-                "--repo-type", "dataset",
-                "--local-dir", str(LEROBOT_DIR),
+                sys.executable,
+                "-m",
+                "huggingface_hub",
+                "download",
+                LEROBOT_DATASET,
+                "--repo-type",
+                "dataset",
+                "--local-dir",
+                str(LEROBOT_DIR),
             ],
             check=True,
         )
@@ -113,11 +118,11 @@ def download_robomimic():
     注意：这里不走 robomimic 官方下载脚本，因为它依赖 egl_probe（Mac 装不了）。
     直接从 HuggingFace 仓库按文件下载，绕过这个问题。
     """
-    print(f"\n{'='*60}")
-    print(f"Downloading robomimic can/ph")
+    print(f"\n{'=' * 60}")
+    print("Downloading robomimic can/ph")
     print(f"Destination: {ROBOMIMIC_DIR}")
-    print(f"Expected size: low_dim ~45 MB, raw ~62 MB")
-    print(f"{'='*60}\n")
+    print("Expected size: low_dim ~45 MB, raw ~62 MB")
+    print(f"{'=' * 60}\n")
 
     ROBOMIMIC_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -127,14 +132,14 @@ def download_robomimic():
 
         for filename, desc in [
             ("v1.5/can/ph/low_dim_v15.hdf5", "low_dim"),  # 纯数值，45 MB
-            ("v1.5/can/ph/demo_v15.hdf5", "raw"),          # 原始录制，62 MB
+            ("v1.5/can/ph/demo_v15.hdf5", "raw"),  # 原始录制，62 MB
         ]:
             print(f"Downloading {desc}: {filename}")
             hf_hub_download(
                 repo_id="robomimic/robomimic_datasets",  # robomimic 官方 HF 仓库
                 repo_type="dataset",
-                filename=filename,                        # 仓库内的文件路径
-                local_dir=str(ROBOMIMIC_DIR),             # 下载到本地的目录
+                filename=filename,  # 仓库内的文件路径
+                local_dir=str(ROBOMIMIC_DIR),  # 下载到本地的目录
             )
 
         print(f"\nRobomimic dataset saved to {ROBOMIMIC_DIR}")
@@ -144,22 +149,25 @@ def download_robomimic():
         print("Falling back to robomimic download script...")
         subprocess.run(
             [
-                sys.executable, "-m",
+                sys.executable,
+                "-m",
                 "robomimic.scripts.download_datasets",
-                "--tasks", "can",            # 任务：抓罐子
-                "--dataset_types", "ph",     # 数据类型：熟练人类示教
+                "--tasks",
+                "can",  # 任务：抓罐子
+                "--dataset_types",
+                "ph",  # 数据类型：熟练人类示教
             ],
             check=True,
         )
-        print(f"\nRobomimic downloaded to default location (~/.robomimic/datasets/)")
+        print("\nRobomimic downloaded to default location (~/.robomimic/datasets/)")
         print(f"You may want to move/symlink it to {ROBOMIMIC_DIR}")
 
 
 def show_summary():
     """下载完成后统计每个数据集的实际大小和文件数。"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("Download summary")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     for label, path in [("LeRobot", LEROBOT_DIR), ("Robomimic", ROBOMIMIC_DIR)]:
         if path.exists():
             # rglob("*") 递归遍历所有文件，累加大小

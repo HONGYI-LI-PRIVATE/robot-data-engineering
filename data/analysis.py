@@ -5,6 +5,7 @@
 """
 
 import numpy as np
+
 from .loader import DatasetInfo
 
 
@@ -53,15 +54,17 @@ def action_analysis(info: DatasetInfo) -> dict:
         # 不同取值 ≤ 3 个就认为是二值化（留点余量，有时有 0, 0.5, 1 三档）
         is_binary = len(unique_vals) <= 3
 
-        per_dim.append({
-            "dim": d,
-            "mean": float(np.mean(col)),
-            "std": float(np.std(col)),
-            "min": float(np.min(col)),
-            "max": float(np.max(col)),
-            "unique_count": len(unique_vals),
-            "is_binary": is_binary,
-        })
+        per_dim.append(
+            {
+                "dim": d,
+                "mean": float(np.mean(col)),
+                "std": float(np.std(col)),
+                "min": float(np.min(col)),
+                "max": float(np.max(col)),
+                "unique_count": len(unique_vals),
+                "is_binary": is_binary,
+            }
+        )
 
     gripper_dim = info.action_dim - 1
     gripper_is_binary = per_dim[gripper_dim]["is_binary"] if per_dim else False
@@ -117,29 +120,31 @@ def velocity_acceleration(info: DatasetInfo) -> dict:
     anomaly_episodes = []
     for ep_idx, ep in enumerate(info.episodes):
         if ep.actions.shape[0] < 3:
-            anomaly_episodes.append({
-                "episode": ep_idx,
-                "anomaly_frames": 0,
-                "total_frames": ep.actions.shape[0],
-                "anomaly_ratio": 0.0,
-            })
+            anomaly_episodes.append(
+                {
+                    "episode": ep_idx,
+                    "anomaly_frames": 0,
+                    "total_frames": ep.actions.shape[0],
+                    "anomaly_ratio": 0.0,
+                }
+            )
             continue
 
         velocity = np.diff(ep.actions, axis=0)
         acceleration = np.diff(velocity, axis=0)
 
         # 任意一维加速度偏离均值超过 3σ 就算异常帧
-        is_anomaly = np.any(
-            np.abs(acceleration - acc_mean) > threshold * acc_std, axis=1
-        )
+        is_anomaly = np.any(np.abs(acceleration - acc_mean) > threshold * acc_std, axis=1)
         anomaly_count = int(np.sum(is_anomaly))
 
-        anomaly_episodes.append({
-            "episode": ep_idx,
-            "anomaly_frames": anomaly_count,
-            "total_frames": ep.actions.shape[0],
-            "anomaly_ratio": anomaly_count / ep.actions.shape[0],
-        })
+        anomaly_episodes.append(
+            {
+                "episode": ep_idx,
+                "anomaly_frames": anomaly_count,
+                "total_frames": ep.actions.shape[0],
+                "anomaly_ratio": anomaly_count / ep.actions.shape[0],
+            }
+        )
 
     return {
         "all_velocities": all_vel,
@@ -181,11 +186,13 @@ def timestamp_check(info: DatasetInfo) -> dict | None:
             expected_interval = 1.0 / info.fps
             drops = np.where(intervals > expected_interval * 1.5)[0]
             if len(drops) > 0:
-                dropped_frames.append({
-                    "episode": ep_idx,
-                    "drop_count": len(drops),
-                    "max_gap": float(np.max(intervals)),
-                })
+                dropped_frames.append(
+                    {
+                        "episode": ep_idx,
+                        "drop_count": len(drops),
+                        "max_gap": float(np.max(intervals)),
+                    }
+                )
 
     if not all_intervals:
         return None
@@ -214,11 +221,13 @@ def dead_episodes(info: DatasetInfo) -> dict:
     for ep_idx, ep in enumerate(info.episodes):
         var_per_dim = np.var(ep.actions, axis=0)  # 每一维的方差
         total_var = float(np.sum(var_per_dim))  # 求和得到标量
-        variances.append({
-            "episode": ep_idx,
-            "total_variance": total_var,
-            "length": ep.actions.shape[0],
-        })
+        variances.append(
+            {
+                "episode": ep_idx,
+                "total_variance": total_var,
+                "length": ep.actions.shape[0],
+            }
+        )
 
     all_vars = np.array([v["total_variance"] for v in variances])
     median_var = float(np.median(all_vars))

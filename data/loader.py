@@ -8,9 +8,10 @@
   - HDF5 (robomimic)：传入 .hdf5 文件路径
 """
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
-import json
+
 import numpy as np
 
 
@@ -128,7 +129,7 @@ def _load_hdf5(path: Path) -> DatasetInfo:
 
     # 找所有 demo 并按编号排序
     demo_keys = sorted(
-        [k for k in f["data"].keys() if k.startswith("demo")],
+        [k for k in f["data"] if k.startswith("demo")],
         key=lambda x: int(x.split("_")[1]),
     )
 

@@ -17,12 +17,13 @@ from datetime import datetime
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")  # 不弹窗，直接写文件
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .loader import DatasetInfo, load_dataset
 from . import analysis
+from .loader import DatasetInfo, load_dataset
 
 
 def robdata_analyse(path: str, output_dir: str = "reports") -> str:
@@ -91,8 +92,13 @@ def _plot_episode_lengths(basic: dict) -> str:
     for label, val in basic["length_percentiles"].items():
         ax.axvline(val, color="red", linestyle="--", alpha=0.5)
         ax.text(
-            val, ax.get_ylim()[1] * 0.9, label,
-            rotation=90, va="top", fontsize=8, color="red",
+            val,
+            ax.get_ylim()[1] * 0.9,
+            label,
+            rotation=90,
+            va="top",
+            fontsize=8,
+            color="red",
         )
 
     return _fig_to_base64(fig)
@@ -115,8 +121,13 @@ def _plot_action_dims(actions: dict) -> str:
     for dim_info in actions["per_dim"]:
         if dim_info["is_binary"]:
             ax.text(
-                dim_info["dim"] + 1, ax.get_ylim()[1], "BIN",
-                ha="center", fontsize=8, color="red", fontweight="bold",
+                dim_info["dim"] + 1,
+                ax.get_ylim()[1],
+                "BIN",
+                ha="center",
+                fontsize=8,
+                color="red",
+                fontweight="bold",
             )
 
     return _fig_to_base64(fig)
@@ -141,7 +152,9 @@ def _plot_velocity_acceleration(vel_acc: dict) -> str:
 
         threshold_val = float(np.mean(acc_norms) + 3 * np.std(acc_norms))
         axes[1].axvline(
-            threshold_val, color="red", linestyle="--",
+            threshold_val,
+            color="red",
+            linestyle="--",
             label=f"3σ = {threshold_val:.4f}",
         )
         axes[1].legend()
@@ -163,7 +176,9 @@ def _plot_timestamps(ts: dict) -> str:
     if expected:
         ax.axvline(expected, color="red", linestyle="--", label=f"Expected: {expected:.4f}s")
         ax.axvline(
-            expected * 1.5, color="orange", linestyle="--",
+            expected * 1.5,
+            color="orange",
+            linestyle="--",
             label=f"Drop threshold: {expected * 1.5:.4f}s",
         )
         ax.legend()
@@ -187,7 +202,10 @@ def _plot_dead_episodes(dead: dict) -> str:
 
     ax.bar(range(len(total_vars)), total_vars, color=colors, edgecolor="none")
     ax.axhline(
-        dead["dead_threshold"], color="red", linestyle="--", alpha=0.5,
+        dead["dead_threshold"],
+        color="red",
+        linestyle="--",
+        alpha=0.5,
         label=f"Dead threshold: {dead['dead_threshold']:.6f}",
     )
     ax.legend()
@@ -218,8 +236,7 @@ def _render_html(info: DatasetInfo, results: dict) -> str:
     action_rows = ""
     for d in actions["per_dim"]:
         binary_tag = (
-            " <span style='color:red;font-weight:bold'>BINARY</span>"
-            if d["is_binary"] else ""
+            " <span style='color:red;font-weight:bold'>BINARY</span>" if d["is_binary"] else ""
         )
         action_rows += (
             f"<tr><td>{d['dim']}</td><td>{d['mean']:.4f}</td><td>{d['std']:.4f}</td>"
@@ -256,11 +273,15 @@ def _render_html(info: DatasetInfo, results: dict) -> str:
         ts_section = f"""
         <h2>4. Timestamp Check</h2>
         <table>
-            <tr><td>Expected Interval</td><td>{ts['expected_interval']:.4f}s ({info.fps} fps)</td></tr>
-            <tr><td>Actual Mean Interval</td><td>{ts['interval_mean']:.4f}s</td></tr>
-            <tr><td>Interval Std</td><td>{ts['interval_std']:.6f}s</td></tr>
-            <tr><td>Min / Max Interval</td><td>{ts['interval_min']:.4f}s / {ts['interval_max']:.4f}s</td></tr>
-            <tr><td>Total Dropped Frames</td><td>{ts['total_drops']}</td></tr>
+            <tr><td>Expected Interval</td>
+                <td>{ts["expected_interval"]:.4f}s ({info.fps} fps)</td></tr>
+            <tr><td>Actual Mean Interval</td>
+                <td>{ts["interval_mean"]:.4f}s</td></tr>
+            <tr><td>Interval Std</td>
+                <td>{ts["interval_std"]:.6f}s</td></tr>
+            <tr><td>Min / Max Interval</td>
+                <td>{ts["interval_min"]:.4f}s / {ts["interval_max"]:.4f}s</td></tr>
+            <tr><td>Total Dropped Frames</td><td>{ts["total_drops"]}</td></tr>
         </table>
         <img src="data:image/png;base64,{img_ts}">
         """
@@ -305,7 +326,9 @@ def _render_html(info: DatasetInfo, results: dict) -> str:
     <span><strong>Format:</strong> {info.format}</span>
     <span><strong>Robot:</strong> {info.robot_type or "N/A"}</span>
     <span><strong>FPS:</strong> {info.fps or "N/A"}</span>
-    <span><strong>Cameras:</strong> {", ".join(info.camera_names) if info.camera_names else "N/A"}</span>
+    <span><strong>Cameras:</strong> {
+        ", ".join(info.camera_names) if info.camera_names else "N/A"
+    }</span>
     <span><strong>Generated:</strong> {datetime.now():%Y-%m-%d %H:%M}</span>
 </div>
 
@@ -319,7 +342,10 @@ def _render_html(info: DatasetInfo, results: dict) -> str:
     <tr><td>Episode Length (min / max)</td>
         <td>{basic["length_min"]} / {basic["length_max"]} frames</td></tr>
     <tr><td>Percentiles (P25 / P50 / P75 / P95)</td>
-        <td>{basic["length_percentiles"]["P25"]:.0f} / {basic["length_percentiles"]["P50"]:.0f} / {basic["length_percentiles"]["P75"]:.0f} / {basic["length_percentiles"]["P95"]:.0f}</td></tr>
+        <td>{basic["length_percentiles"]["P25"]:.0f} / \
+{basic["length_percentiles"]["P50"]:.0f} / \
+{basic["length_percentiles"]["P75"]:.0f} / \
+{basic["length_percentiles"]["P95"]:.0f}</td></tr>
 </table>
 <img src="data:image/png;base64,{img_lengths}">
 
@@ -332,7 +358,8 @@ def _render_html(info: DatasetInfo, results: dict) -> str:
 <img src="data:image/png;base64,{img_actions}">
 
 <h2>3. Velocity &amp; Acceleration Analysis</h2>
-<p>Anomaly threshold: acceleration deviation &gt; {vel_acc["anomaly_threshold"]}&sigma; from mean</p>
+<p>Anomaly threshold: acceleration deviation &gt; \
+{vel_acc["anomaly_threshold"]}&sigma; from mean</p>
 <img src="data:image/png;base64,{img_acc}">
 
 <h3>Top 10 Episodes by Anomaly Ratio (jitter)</h3>
