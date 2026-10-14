@@ -20,6 +20,8 @@ env/
 *.swo
 
 # Data (large files, download locally)
+data/lerobot/
+data/robomimic/
 *.hdf5
 *.h5
 *.mp4
