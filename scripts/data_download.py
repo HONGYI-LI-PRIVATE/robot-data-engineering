@@ -115,8 +115,11 @@ def download_robomimic():
       │   └── ...
       └── ...共 200 个 demo
 
-    注意：这里不走 robomimic 官方下载脚本，因为它依赖 egl_probe（Mac 装不了）。
-    直接从 HuggingFace 仓库按文件下载，绕过这个问题。
+    注意：
+    - 不走 robomimic 官方下载脚本，因为它依赖 egl_probe（Mac 装不了）。
+      直接从 HuggingFace 仓库按文件下载，绕过这个问题。
+    - image 版本（带相机图像）官方不提供直接下载，需要用仿真器从 demo 重放生成。
+      HF 仓库里 can/ph 只有 low_dim 和 demo 两个文件，这里已经全部覆盖。
     """
     print(f"\n{'=' * 60}")
     print("Downloading robomimic can/ph")
