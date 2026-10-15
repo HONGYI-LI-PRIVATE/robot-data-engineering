@@ -88,6 +88,7 @@ python -m data.report --dataset data/robomimic/can_ph/v1.5/can/ph/low_dim_v15.hd
 
 ```python
 from data.loader import load_dataset
+
 info = load_dataset("data/robomimic/can_ph/v1.5/can/ph/low_dim_v15.hdf5")
 info = load_dataset("data/lerobot/aloha_static_coffee")
 ```
@@ -104,7 +105,7 @@ info = load_dataset("path/to/dataset")
 basic = analysis.basic_stats(info)
 actions = analysis.action_analysis(info)
 vel_acc = analysis.velocity_acceleration(info)
-ts = analysis.timestamp_check(info)       # HDF5 返回 None（无时间戳）
+ts = analysis.timestamp_check(info)  # HDF5 返回 None（无时间戳）
 dead = analysis.dead_episodes(info)
 ```
 
